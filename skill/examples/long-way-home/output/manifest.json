@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-11-07T08:20:59.906Z",
+  "title": "回家的路",
+  "slug": "long-way-home",
+  "file": "output/long-way-home.mp4",
+  "duration": 12,
+  "bytes": 22773064,
+  "sha256": "c5885ac43ce503410753efe135b10b05489176f00106d0d4802382fe9c27f089",
+  "fps": 24,
+  "width": 1280,
+  "height": 720,
+  "frames": 288,
+  "sourceHash": "a604cde97eee3336289ab460cd2ef78d4950fa1805cad0b7ec6b4c5f3ff13040",
+  "gpu": {
+    "hardware": true,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "audio": "audio/long-way-home.mp3",
+  "shots": [
+    {
+      "shot": "01-window",
+      "frames": 96
+    },
+    {
+      "shot": "02-street",
+      "frames": 96
+    },
+    {
+      "shot": "03-dawn",
+      "frames": 96
+    }
+  ]
+}

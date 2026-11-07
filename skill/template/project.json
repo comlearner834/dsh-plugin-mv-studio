@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "title": "回家的路",
+  "slug": "long-way-home",
+  "width": 1280,
+  "height": 720,
+  "fps": 24,
+  "brushScale": 3.2,
+  "palette": {
+    "paper": "#efe4ce",
+    "paperDeep": "#e4d4b7",
+    "ink": "#2a231d",
+    "rust": "#b6543a",
+    "indigo": "#29465b",
+    "moss": "#61705a",
+    "gold": "#c99b4e",
+    "bone": "#f7efdf"
+  },
+  "audio": {
+    "file": "audio/long-way-home.mp3",
+    "startAt": 0,
+    "gainDb": -1.5
+  },
+  "lyrics": {
+    "file": "lyrics/long-way-home.lrc",
+    "enabled": true,
+    "offsetMs": 0,
+    "style": "wipe",
+    "size": 40,
+    "bottom": 0.84,
+    "alpha": 0.94,
+    "color": "#f7efdf",
+    "strokeColor": "rgba(34,26,19,0.56)",
+    "strokeWidth": 3.2,
+    "maxHold": 6.5
+  },
+  "render": {
+    "workers": 4,
+    "crf": 17,
+    "preset": "medium",
+    "audioBitrate": "192k"
+  },
+  "shots": [
+    {
+      "id": "01-window",
+      "scene": "window",
+      "title": "窗",
+      "summary": "黄昏的窗，纸月亮，屋里的人还没有起身。",
+      "duration": 4,
+      "seed": 101,
+      "keyframes": [0.16, 0.5, 0.84]
+    },
+    {
+      "id": "02-street",
+      "scene": "street",
+      "title": "雨",
+      "summary": "雨里的街，一盏钠灯，一个人往家走。",
+      "duration": 4,
+      "seed": 202,
+      "keyframes": [0.16, 0.5, 0.84]
+    },
+    {
+      "id": "03-dawn",
+      "scene": "dawn",
+      "title": "早班车",
+      "summary": "天亮了，车来了，路还没有走完。",
+      "duration": 4,
+      "seed": 303,
+      "keyframes": [0.16, 0.5, 0.84]
+    }
+  ]
+}

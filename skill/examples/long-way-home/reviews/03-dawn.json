@@ -1,0 +1,15 @@
+{
+  "shot": "03-dawn",
+  "verdict": "pass",
+  "notes": "GPU review: 天亮与歌词可读，车体比例稳定。",
+  "sheet": "build/review/03-dawn/contact-sheet.jpg",
+  "framesHash": "32637eb9873b3c6fe4dac260113dde48b5e980d813b2d4769d221e9cd282ec25",
+  "sourceHash": "a604cde97eee3336289ab460cd2ef78d4950fa1805cad0b7ec6b4c5f3ff13040",
+  "gpu": {
+    "hardware": true,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "reviewedAt": "2026-11-07T08:20:07.282Z"
+}

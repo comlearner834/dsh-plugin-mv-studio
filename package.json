@@ -2,7 +2,7 @@
   "name": "@local/painted-animation-studio",
   "version": "1.1.0",
   "type": "module",
-  "description": "A sidebar studio for hand-painted music videos and one-shot-per-line classical poetry films.",
+  "description": "A DSH-native studio for procedural hand-painted music videos and one-shot-per-line classical poetry films.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,7 +30,8 @@
     "icon.svg",
     "README.md",
     "LICENSE",
-    "docs/*.png"
+    "docs/*.png",
+    "skill"
   ],
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" },

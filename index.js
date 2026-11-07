@@ -1,6 +1,8 @@
-/** Host half of the MV Studio bundle: save uploaded character references. */
-import { mkdir, writeFile } from 'node:fs/promises';
-import { join, extname } from 'node:path';
+/** Host half of the MV Studio bundle: bundled skill + character references. */
+import { access, cp, lstat, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { homedir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
 const MAX_BYTES = 12 * 1024 * 1024;
 const MIME_EXT = {
@@ -58,10 +60,50 @@ export async function saveCharacter({ baseDir, name, data }) {
   };
 }
 
+async function exists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function ensureBundledSkill(options = {}) {
+  const packageFile = fileURLToPath(new URL('./package.json', import.meta.url));
+  const source = fileURLToPath(new URL('./skill/', import.meta.url));
+  const version = JSON.parse(await readFile(packageFile, 'utf8')).version;
+  const dshHome = options.dshHome || process.env.DSH_HOME || join(homedir(), '.dsh');
+  const target = join(dshHome, 'skills', 'painted-animation');
+  const marker = join(target, '.mv-studio-version');
+
+  let info = null;
+  try {
+    info = await lstat(target);
+  } catch {
+    info = null;
+  }
+
+  if (info) {
+    if (info.isSymbolicLink()) return { status: 'skipped-symlink', target };
+    const installed = await readFile(marker, 'utf8').catch(() => '');
+    if (installed.trim() === version) return { status: 'current', target, version };
+    if (!installed && await exists(join(target, 'SKILL.md'))) {
+      return { status: 'skipped-user-managed', target };
+    }
+    await rm(target, { recursive: true, force: true });
+  }
+
+  await mkdir(dirname(target), { recursive: true });
+  await cp(source, target, { recursive: true, force: true });
+  await writeFile(marker, `${version}\n`);
+  return { status: 'installed', target, version };
+}
+
 export const inject = ['webServer'];
 
-export function apply(ctx) {
-  return ctx.effect(() => ctx.webServer.register({
+export async function apply(ctx) {
+  const route = ctx.effect(() => ctx.webServer.register({
     kind: 'exact',
     path: '/mv-studio/character-upload',
     handler: async (req, res) => {
@@ -88,4 +130,11 @@ export function apply(ctx) {
       }
     },
   }));
+  try {
+    const result = await ensureBundledSkill();
+    console.log(`[mv-studio] bundled skill ${result.status}: ${result.target}`);
+  } catch (error) {
+    console.warn(`[mv-studio] bundled skill install failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  return route;
 }

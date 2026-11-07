@@ -1,0 +1,15 @@
+{
+  "shot": "02-street",
+  "verdict": "pass",
+  "notes": "GPU review: 钠灯、雨线、人物剪影稳定，横移无接缝。",
+  "sheet": "build/review/02-street/contact-sheet.jpg",
+  "framesHash": "e9a1f85b63b6c570fcf750f35ae444d9fca45c3fdd548a84619151a1b1da0192",
+  "sourceHash": "a604cde97eee3336289ab460cd2ef78d4950fa1805cad0b7ec6b4c5f3ff13040",
+  "gpu": {
+    "hardware": true,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "reviewedAt": "2026-11-07T08:20:06.931Z"
+}

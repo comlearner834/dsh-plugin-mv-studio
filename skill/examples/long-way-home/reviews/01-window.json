@@ -1,0 +1,15 @@
+{
+  "shot": "01-window",
+  "verdict": "pass",
+  "notes": "GPU review: 窗框、月光纸纹、歌词清楚；边缘无纸底缝。",
+  "sheet": "build/review/01-window/contact-sheet.jpg",
+  "framesHash": "af14da4db972df815b1ed2c0e97d4c7097bca5014b6793d26ccebf383f0e1dbe",
+  "sourceHash": "a604cde97eee3336289ab460cd2ef78d4950fa1805cad0b7ec6b4c5f3ff13040",
+  "gpu": {
+    "hardware": true,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "reviewedAt": "2026-11-07T08:20:06.563Z"
+}
