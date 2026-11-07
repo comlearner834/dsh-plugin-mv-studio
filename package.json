@@ -1,0 +1,42 @@
+{
+  "name": "@local/painted-animation-studio",
+  "version": "1.1.0",
+  "type": "module",
+  "description": "A sidebar studio for hand-painted music videos and one-shot-per-line classical poetry films.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/comlearner834/dsh-plugin-mv-studio.git"
+  },
+  "homepage": "https://github.com/comlearner834/dsh-plugin-mv-studio",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "music-video",
+    "poetry",
+    "animation"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    "docs/*.png"
+  ],
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    }
+  }
+}

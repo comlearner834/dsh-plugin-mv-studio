@@ -1,0 +1,7 @@
+node_modules/
+build/
+output/
+reviews/
+approval.json
+*.zip
+.DS_Store
