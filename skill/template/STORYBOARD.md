@@ -27,6 +27,39 @@ shots. Say where it appears at the start, middle and end.
 |---|---|---|---|
 |  |  |  |  |
 
+## S — spec ledger
+
+| ID | Binding value / instruction |
+|---|---|
+| S01 |  |
+| S02 |  |
+
+Exact values only: duration, size, fps, colours, copy, counts, timings, bans.
+Never round or rename.
+
+## X — transformation ledger
+
+| ID | Source → target | Mechanism | Start–end | Conserved |
+|---|---|---|---|---|
+| X01 |  |  |  |  |
+
+Every “becomes / turns into / gathers / unfolds” gets a row. An overlay or
+crossfade is not a transformation.
+
+## E — element ledger
+
+| ID | Element | Playbook | Structural features | Size / position | Motion | Holder / layer |
+|---|---|---|---|---|---|---|
+| E01 |  |  |  |  |  |  |
+
+## Timeline
+
+| Time | Scene | Viewer learns | Carries in → out | Transition out |
+|---|---|---|---|---|
+| 0.0–4.0 |  |  |  |  |
+
+`T` key times: `T01` … `T02` …
+
 ## Shots
 
 For each shot write the timed **reads** — what the viewer must understand, in
