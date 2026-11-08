@@ -70,6 +70,21 @@ Fail example: bone text with no keyline disappearing into a sunrise.
 - Frame dimensions are exact; no browser scrollbar or clipped canvas.
 - Audio (if present) starts where the picture says it does.
 
+## Five-juror gate
+
+For a full film, score each juror 1–10 and name its worst moment with a
+timestamp. Fix every juror below 8, worst first, up to three rounds.
+
+1. **SPEC.** Every S/X/E row is implemented with its exact value. This score
+   caps the total.
+2. **CONTINUITY.** Every X row is a real transformation; identity and slots
+   persist; physics and depth correct.
+3. **RHYTHM & SOUND.** Events land on beats; easing matches; energy even; every
+   hit has its sound; loop seam clean.
+4. **DESIGN.** Hero frames, occupancy, whitespace and every element playbook;
+   the look is designed for this film, not a helper default.
+5. **CRAFT.** Texture/light per element; deterministic; no anti-slop item.
+
 ## Verdict notes
 
 Use a compact form:

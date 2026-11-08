@@ -19,6 +19,38 @@ moon.
 The moon: a paper moon in the window, then a lamp behind rain, then the sun
 that replaces it at dawn.
 
+## S — spec ledger
+
+| ID | Binding value |
+|---|---|
+| S01 | 12 s, 1280×720, 24 fps |
+| S02 | paper #efe4ce, ink #2a231d, rust #b6543a |
+| S03 | four lyric lines at 0.50 / 3.60 / 7.20 / 10.00 s |
+| S04 | no pure black, no watermark |
+
+## X — transformation ledger
+
+| ID | Source → target | Mechanism | Start–end | Conserved |
+|---|---|---|---|---|
+| X01 | paper moon → window lamp | same circle; colour/glow change | 2.8–4.0 | circle, frame slot |
+| X02 | rain line → dawn horizon | stitch by shared endpoints | 7.2–8.0 | line direction |
+
+## E — element ledger
+
+| ID | Element | Playbook | Features | Motion |
+|---|---|---|---|---|
+| E01 | window | environment | frame, sill, paper moon, rain | slow drift |
+| E02 | street | environment | lamps, road, buildings, rain | pan follows walker |
+| E03 | bus | object | body, windows, wheels, warm interior | arrives from right |
+
+## Timeline
+
+| Time | Scene | Viewer learns | Carries in → out | Transition |
+|---|---|---|---|---|
+| 0–4 | window | she is still home | moon → lamp | match cut |
+| 4–8 | street | the road is long | lamp → rain line | pan |
+| 8–12 | dawn | the bus arrives | rain line → horizon | pull back |
+
 ## Shots
 
 | # | Time | Lyric | Shot | Reads | In | Out |

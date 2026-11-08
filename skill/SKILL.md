@@ -42,6 +42,26 @@ painted as ink with a dark keyline. See `references/style.md`.
 5. Ask explicitly for a local full render. Only then approve, render final
    frames, review them, and encode.
 
+## Priority order
+
+When instructions compete: **the user's exact words** → **look and craft at the
+chosen style's level** → **continuity** → **rhythm and sound** → bookkeeping.
+Every value in the prompt is binding; the last third of a long prompt counts as
+much as the first. Helpers and examples are mechanics, not style.
+
+## Three ledgers
+
+Write these in `STORYBOARD.md` before code:
+
+- **S — spec**: one row per value/instruction (duration, size, fps, colours,
+  copy, counts, timings, bans), quoted exactly.
+- **X — transformation**: every becoming verb as `source → target · mechanism ·
+  start–end · what is conserved`.
+- **E — element**: every drawn thing with its playbook, three or more
+  structural features, size/position, motion, and holder/layer.
+
+See `references/design-jury.md`.
+
 ## Non-negotiable rules
 
 1. **Every frame is a pure function of time.** Scenes get `t`; no
@@ -105,8 +125,10 @@ artist are only local search keys; the helper never uses them to look up,
 stream, or download the commercial recording.** It never downloads audio or
 lyrics.
 
-- **Local audio found**: use it. If a sidecar LRC exists, sync it; if not, make
-  an instrumental/visual MV without lyrics.
+- **Local audio found**: use it. If a sidecar LRC exists, sync it; if only
+  plain-text lyrics exist, align them locally with `scripts/align-lyrics.py`
+  (see `references/lyrics-align.md`); otherwise make an instrumental/visual MV
+  without lyrics.
 - **Nothing found**: the helper generates an original 30-second instrumental
   score and sets `project.song.mode = "original"`. This is **not** the
   commercial recording. Write original lyrics (4–8 lines), make an LRC, and
@@ -177,13 +199,14 @@ gates.
 ```bash
 node <skill>/scripts/scaffold.mjs "D:/work/my-mv" --title "纸月亮" --slug "paper-moon" --width 1280 --height 720 --fps 24
 cd "D:/work/my-mv"
-npm install
 node render.mjs doctor
 node render.mjs check
 ```
 
-Requires Node 20+, Chrome or Edge, and a one-time `npm install` (which also
-downloads the local ffmpeg binary). After that, rendering is entirely local.
+Requires Node 20+, Chrome or Edge. `scaffold.mjs` installs the project
+dependencies from `package-lock.json` automatically (including local ffmpeg);
+pass `--no-install` only when offline, then run `npm install` inside the
+project once. After that, rendering is entirely local.
 
 `scaffold.mjs` copies the runnable `template/` (including `MEMORY.md` and
 `STORYBOARD.md`) and resets review/approval state. If the user supplied
@@ -215,6 +238,10 @@ Before drawing, write `STORYBOARD.md` (template: `template/STORYBOARD.md`):
 - **Motif** — one object/colour/gesture that marks the character or idea.
 - **Cast** — look, want, arc; one drawing function per character.
 - **Shot table** — time, lyric, shot, **reads**, in, out.
+
+Before shots, read `references/characters.md` and draw a character sheet:
+front/side, three expressions, held props. Keep cast and sets in
+`src/characters.js` / `src/sets.js`; chapters import them, never fork them.
 
 A shot without timed reads is not ready. If a read does not fit, cut it or
 carry the gag into the next shot; never slow the song to explain it.
@@ -288,6 +315,16 @@ frames, then record each final verdict:
 node render.mjs final-verdict --shot 01-window --pass --notes "终版：...；帧 0048 的月光边缘没有白边" --sheet build/final/01-window/contact-sheet.jpg
 ```
 
+If only one shot changed, do not re-render the whole film:
+
+```bash
+node render.mjs final --shots 02
+```
+
+This keeps the other final frames and requires a fresh `final-verdict` for the
+re-rendered shot. `--range 3:6` does the same for a 1-based shot range. A
+partial run needs an existing current final.
+
 Only when all final verdicts pass:
 
 ```bash
@@ -295,8 +332,16 @@ node render.mjs final --encode
 ```
 
 This writes `output/<slug>.mp4`, `output/<slug>.srt`,
-`output/manifest.json`. Verify the printed duration/size and open a final
-frame from the encoded video if needed.
+`output/manifest.json`. Verify the printed duration/size and run the
+post-render check:
+
+```bash
+node scripts/check-film.mjs --file output/<slug>.mp4
+```
+
+It writes `build/check/sheet.png`, stills, an audio spectrogram and a motion
+curve. Fix every `FAIL` before delivery; treat a motion spike as a planned hit
+or a defect, not as decoration. Add `--loop` for a seamless loop.
 
 ## Commands
 
@@ -306,6 +351,10 @@ frame from the encoded video if needed.
 | `node scripts/poetry-intake.mjs --project <dir> --title "..." --poem-file poem.txt --style ink` | One shot per poem line + plan/brief |
 | `node scripts/poetry-voice.mjs --project <dir> --plan poetry-plan.json` | Local Windows recitation + measured shot durations |
 | `python scripts/beat-grid.py song.mp3 --lrc song.lrc` | BPM, beat phase, and each lyric line's beat index |
+| `node scripts/check-film.mjs --file output/<slug>.mp4` | Format, first-frame flash, loop seam, audio, sheet, motion curve |
+| `node scripts/quality-audit.mjs --project <dir>` | Flat-fill / shot-repeat / lyric-safety audit |
+| `node scripts/short-plan.mjs --title "..." --topic "..." --rounds 6 --theme coral` | 18–54 s short timeline + brief |
+| `uv run --with faster-whisper --with zhconv python scripts/align-lyrics.py song.mp3 lyrics.txt` | Plain lyrics → timed LRC, local |
 | `node render.mjs doctor` | Checks project, Chrome, ffmpeg, audio duration, reviews |
 | `node render.mjs check` | Static pure-time scan + double render determinism check |
 | `node render.mjs storyboard` | 3 keyframes per shot + contact sheet |
@@ -313,6 +362,8 @@ frame from the encoded video if needed.
 | `node render.mjs verdict --shot <id> --pass --notes "..." --sheet <path>` | Records draft review |
 | `node render.mjs approve --mode local --quote "..."` | Writes approval after explicit user choice |
 | `node render.mjs final` | Full-quality frames + final sheets; no encode |
+| `node render.mjs final --shots 02,04` | Re-render only those shots, keep the rest |
+| `node render.mjs final --range 3:6` | Re-render a 1-based shot range |
 | `node render.mjs final-verdict --shot <id> --pass --notes "..." --sheet <path>` | Records final review |
 | `node render.mjs final --encode` | Encodes after all gates pass |
 
@@ -351,12 +402,29 @@ Do not put a 5-minute film in one context. Split it:
 
 See `references/long-form.md` for the file layout and brief format.
 
+## Short video
+
+A vertical 18–54 s showcase uses a fixed grammar, not a fixed art style:
+
+```text
+3s opening + N × (1s big card + 3s style segment) + 3s ending
+N = 3..12
+```
+
+At 30 fps, each round is 120 frames. The style segment starts on a beat; one
+idea per round; all text sits inside the middle 80%; no bottom subtitle bar.
+Use `scripts/short-plan.mjs` to write `short-plan.json` + brief, then the normal
+storyboard, still review and local render gates. Take the grammar, not the
+reference's HTML/Canvas/Three.js stack; keep p5.brush. See
+`references/short-video.md`.
+
 ## GPU rendering
 
 The default is `--gpu auto`: launch Chrome with hardware WebGL, probe
 `WEBGL_debug_renderer_info`, and fall back to SwiftShader only if no hardware
-context appears. `--gpu on` refuses to run without a GPU; `--gpu off` is the
-slow deterministic software path.
+context appears. `--gpu on` never silently falls back: it asks before using
+software, and in a non-interactive run it stops with a question for the user
+instead of an error. `--gpu off` is the slow deterministic software path.
 
 A hardware run prints:
 
@@ -368,6 +436,21 @@ GPU rendering changes brush texture slightly. `review.json` records the
 renderer; `final` refuses to pair a hardware draft review with a software
 final (or the reverse). Re-review after switching. PNG screenshots and ffmpeg
 encoding stay CPU-bound, so GPU is not a 10x guarantee.
+
+## Quality gate
+
+Before a full film:
+
+1. Make **one 6-second pilot**. Inspect at 100%: paper fibre, watercolour edge,
+   a face or hand, three depth layers, one motivated light, lyric safe.
+2. Do not expand until the user says the pilot is good.
+3. Run `node scripts/quality-audit.mjs --project <dir>`. Fix flat-fill scenes,
+   repeated compositions and unsafe lyrics; a 3-minute film should be 10–15
+   strong shots, not 27 variations of one window.
+4. A 27/27 pass from thumbnails is not a review. Open a full frame, a face/hand
+   crop and both ends of every shot.
+
+See `references/quality-gate.md`.
 
 ## Review rubric (short form)
 
@@ -396,6 +479,11 @@ Cite the shot, timestamp, and what you saw. See
 - `references/song-intake.md` — title/artist resolution, local matching, original fallback.
 - `references/poetry.md` — one-shot-per-line poem plan, recitation, style presets.
 - `references/motion.md` — character consistency, motion helpers, beat grid, word karaoke, close-up review.
+- `references/design-jury.md` — priority order, S/X/E ledgers, playbooks, five-juror review.
+- `references/short-video.md` — 9:16/1:1 short formula, themes, round grammar, fast review.
+- `references/lyrics-align.md` — plain lyrics → LRC with local faster-whisper.
+- `references/characters.md` — cast, character sheet, shared sets, continuity.
+- `references/quality-gate.md` — 6s pilot, flat-fill audit, shot-count sanity, lyric safety.
 - `template/STORYBOARD.md` — logline, one world, motif, cast, song grid, reads table.
 - `template/MEMORY.md` — locked project facts, cast, do-nots, shot status.
 - `references/long-form.md` — chapter split, shared layer, per-chapter agents, seam review.

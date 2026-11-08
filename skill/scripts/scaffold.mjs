@@ -7,6 +7,7 @@
  */
 import { cp, readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -15,7 +16,7 @@ const template = path.join(skillRoot, 'template');
 const args = process.argv.slice(2);
 const targetArg = args.find((a) => !a.startsWith('--'));
 if (!targetArg) {
-  console.error('Usage: node scripts/scaffold.mjs <target-dir> --title "..." --slug "... " [--width 1280] [--height 720] [--fps 24]');
+  console.error('Usage: node scripts/scaffold.mjs <target-dir> --title "..." --slug "..." [--width 1280] [--height 720] [--fps 24] [--no-install]');
   process.exit(1);
 }
 const opt = (name, fallback) => {
@@ -72,10 +73,25 @@ project.height = height;
 project.fps = fps;
 await writeFile(projectFile, JSON.stringify(project, null, 2) + '\n');
 
+let installed = false;
+if (!args.includes('--no-install')) {
+  console.log('\nInstalling project dependencies (one-time, from package-lock.json)...');
+  const result = spawnSync('npm', ['install', '--no-audit', '--no-fund'], {
+    cwd: target,
+    stdio: 'inherit',
+    shell: process.platform === 'win32',
+  });
+  installed = result.status === 0;
+  if (!installed) {
+    console.error('\nnpm install failed. The project is still created; run npm install inside it once the network is back.');
+  }
+}
+
 console.log(`\nCreated ${project.title} at ${target}`);
+console.log(installed ? '\nDependencies installed.' : '\nDependencies not installed; run npm install once.');
 console.log('\nNext commands (PowerShell):');
 console.log(`  cd "${target}"`);
-console.log('  npm install');
+if (!installed) console.log('  npm install');
 console.log('  node render.mjs doctor');
 console.log('  node render.mjs check');
 console.log('  node render.mjs storyboard');

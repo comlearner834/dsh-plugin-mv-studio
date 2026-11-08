@@ -5,7 +5,7 @@
   "notes": "GPU final: 天亮与末句歌词可读，车体比例稳定。",
   "sheet": "build/final/03-dawn/contact-sheet.jpg",
   "framesHash": "65947e7d4b4e09e2264a058a603cbbd4fa82b92c3befcd33d22a75c8043df4f8",
-  "sourceHash": "a604cde97eee3336289ab460cd2ef78d4950fa1805cad0b7ec6b4c5f3ff13040",
+  "sourceHash": "d5159ae278d738ea926e2f179748a4586cd9837a54eea19398963967b4f6eeff",
   "gpu": {
     "hardware": true,
     "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",

@@ -4,7 +4,7 @@
   "notes": "GPU review: 窗框、月光纸纹、歌词清楚；边缘无纸底缝。",
   "sheet": "build/review/01-window/contact-sheet.jpg",
   "framesHash": "af14da4db972df815b1ed2c0e97d4c7097bca5014b6793d26ccebf383f0e1dbe",
-  "sourceHash": "a604cde97eee3336289ab460cd2ef78d4950fa1805cad0b7ec6b4c5f3ff13040",
+  "sourceHash": "d5159ae278d738ea926e2f179748a4586cd9837a54eea19398963967b4f6eeff",
   "gpu": {
     "hardware": true,
     "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",

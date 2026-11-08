@@ -5,7 +5,7 @@
   "notes": "GPU final: 雨线与钠灯稳定，人物剪影可读；横移无接缝。",
   "sheet": "build/final/02-street/contact-sheet.jpg",
   "framesHash": "f94fcc56f20f839eb7e3f39ff943a05b55067b4de7acc107f5d2057ed699c48b",
-  "sourceHash": "a604cde97eee3336289ab460cd2ef78d4950fa1805cad0b7ec6b4c5f3ff13040",
+  "sourceHash": "d5159ae278d738ea926e2f179748a4586cd9837a54eea19398963967b4f6eeff",
   "gpu": {
     "hardware": true,
     "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",

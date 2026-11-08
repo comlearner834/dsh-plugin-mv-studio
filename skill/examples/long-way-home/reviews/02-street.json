@@ -4,7 +4,7 @@
   "notes": "GPU review: 钠灯、雨线、人物剪影稳定，横移无接缝。",
   "sheet": "build/review/02-street/contact-sheet.jpg",
   "framesHash": "e9a1f85b63b6c570fcf750f35ae444d9fca45c3fdd548a84619151a1b1da0192",
-  "sourceHash": "a604cde97eee3336289ab460cd2ef78d4950fa1805cad0b7ec6b4c5f3ff13040",
+  "sourceHash": "d5159ae278d738ea926e2f179748a4586cd9837a54eea19398963967b4f6eeff",
   "gpu": {
     "hardware": true,
     "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",

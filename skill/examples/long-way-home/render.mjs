@@ -22,6 +22,7 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import os from 'node:os';
+import { createInterface } from 'node:readline/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import puppeteer from 'puppeteer-core';
 import ffmpegStatic from 'ffmpeg-static';
@@ -426,6 +427,29 @@ async function freePort() {
 
 const GPU_MODES = new Set(['auto', 'on', 'off']);
 
+class GpuFallbackDeclined extends Error {
+  constructor(message) {
+    super(message);
+    this.code = 'gpu-fallback-declined';
+  }
+}
+
+async function askSoftwareFallback(detail = '') {
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    console.log('\nGPU WebGL is unavailable and no fallback was started.');
+    console.log('Ask the user: use software renderer with --gpu off, or fix the GPU and retry.');
+    return false;
+  }
+  const prompt = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const suffix = detail ? ` (${detail})` : '';
+    const answer = await prompt.question(`GPU WebGL unavailable${suffix}. Fall back to software? [y/N] `);
+    return /^y(es)?$/i.test(answer.trim());
+  } finally {
+    prompt.close();
+  }
+}
+
 function resolveGpuMode(flags, project) {
   const raw = flags?.gpu === true
     ? 'auto'
@@ -600,10 +624,12 @@ async function launchChrome({ gpuMode = 'auto', skipProbe = false } = {}) {
   }
 
   if (gpuMode === 'on') {
-    throw new Error(
-      `GPU rendering was requested but no hardware WebGL context was available. ${failure?.message || ''} ` +
-      'Use --gpu auto or --gpu off.',
-    );
+    const approved = await askSoftwareFallback(failure?.message || '');
+    if (!approved) {
+      throw new GpuFallbackDeclined(
+        'GPU rendering was requested, but software fallback was not approved.',
+      );
+    }
   }
   const software = await startChrome(executable, false);
   software.gpuInfo = skipProbe
@@ -1120,6 +1146,25 @@ async function verifyDraftReviews(project, hash) {
   if (missing.length) throw new Error(`Draft reviews are not ready:\n  ${missing.join('\n  ')}`);
 }
 
+function selectedShots(project, flags) {
+  const ids = new Set();
+  const raw = String(flags.shots || '').split(',').map((v) => v.trim()).filter(Boolean);
+  for (const id of raw) {
+    if (!project.shots.some((shot) => shot.id === id)) throw new Error(`Unknown --shots id "${id}".`);
+    ids.add(id);
+  }
+  const range = String(flags.range || '').trim();
+  if (range) {
+    const match = range.match(/^(\d+):(\d+)$/);
+    if (!match) throw new Error('--range must look like 2:5 (1-based shot indices).');
+    const from = Math.max(1, Number(match[1]));
+    const to = Math.min(project.shots.length, Number(match[2]));
+    if (from > to) throw new Error(`--range ${range} is empty.`);
+    for (let i = from; i <= to; i += 1) ids.add(project.shots[i - 1].id);
+  }
+  return ids;
+}
+
 async function commandFinal(flags) {
   if (flags.encode) return commandEncode(flags);
   printHeader('painted-animation / final frames');
@@ -1131,7 +1176,30 @@ async function commandFinal(flags) {
   if (errors.length) throw new Error(errors.join('\n'));
 
   const base = path.join(BUILD, 'final');
-  await rm(base, { recursive: true, force: true });
+  const wanted = selectedShots(project, flags);
+  const partial = wanted.size > 0 && wanted.size < project.shots.length;
+  let previousManifest = null;
+  if (partial) {
+    if (!existsSync(path.join(base, 'final-manifest.json'))) {
+      throw new Error('--shots/--range needs an existing final render; run a full "final" first.');
+    }
+    previousManifest = await readJson(path.join(base, 'final-manifest.json'));
+    if (previousManifest.sourceHash !== hash) throw new Error('Existing final render is stale; run a full final.');
+    if (previousManifest.gpu && previousManifest.gpu.hardware !== undefined) {
+      const requested = resolveGpuMode(flags, project);
+      if (requested === 'on' && !previousManifest.gpu.hardware) throw new Error('Existing final is software; --gpu on would mix renderers.');
+      if (requested === 'off' && previousManifest.gpu.hardware) throw new Error('Existing final is hardware; --gpu off would mix renderers.');
+    }
+    for (const shot of project.shots) {
+      if (wanted.has(shot.id)) continue;
+      if (!previousManifest.shots?.some((entry) => entry.shot === shot.id)) {
+        throw new Error(`Existing final is missing ${shot.id}; run a full final.`);
+      }
+    }
+    for (const id of wanted) await rm(path.join(base, id), { recursive: true, force: true });
+  } else {
+    await rm(base, { recursive: true, force: true });
+  }
   await ensureDir(base);
   const server = await startServer();
   const workers = Number(flags.workers) || project.render?.workers || 4;
@@ -1140,7 +1208,17 @@ async function commandFinal(flags) {
   const gpu = gpuSummary(pool);
   const finalShots = [];
   try {
+    if (partial && previousManifest?.gpu && previousManifest.gpu.hardware !== gpu.hardware) {
+      throw new Error(
+        `Renderer changed since the existing final render: existing was ${previousManifest.gpu.hardware ? 'hardware' : 'software'}, ` +
+        `this run is ${gpu.hardware ? 'hardware' : 'software'}. Re-run with --gpu ${previousManifest.gpu.hardware ? 'on' : 'off'}.`,
+      );
+    }
     for (const shot of project.shots) {
+      if (wanted.size && !wanted.has(shot.id)) {
+        finalShots.push(previousManifest.shots.find((entry) => entry.shot === shot.id));
+        continue;
+      }
       const previousFile = path.join(REVIEWS, `${shot.id}.json`);
       if (existsSync(previousFile)) {
         const previous = await readJson(previousFile);
@@ -1213,9 +1291,12 @@ async function commandFinal(flags) {
   await writeFile(path.join(base, 'final-manifest.json'), JSON.stringify(manifest, null, 2));
   console.log(`\n${paint(C.green, 'final frames rendered')} - no video has been encoded yet.`);
   for (const shot of project.shots) {
+    if (wanted.size && !wanted.has(shot.id)) continue;
     console.log(`  node render.mjs final-verdict --shot ${shot.id} --pass --notes "what you saw" --sheet build/final/${shot.id}/contact-sheet.jpg`);
   }
-  console.log('\nInspect every final sheet before recording these verdicts.');
+  console.log(partial
+    ? '\nOnly the selected shots were re-rendered. Re-record their final verdicts; unchanged shots keep theirs.'
+    : '\nInspect every final sheet before recording these verdicts.');
 }
 
 async function commandFinalVerdict(flags) {
@@ -1519,8 +1600,10 @@ async function commandHelp() {
   node render.mjs clean
 
 Options:
-  --gpu auto|on|off   WebGL renderer (default auto: hardware, fallback software)
+  --gpu auto|on|off   WebGL renderer (default auto; on asks before software fallback)
   --workers <n>       Parallel Chrome processes, 1-6
+  --shots <ids>       final: re-render only comma-separated shot ids
+  --range <a:b>       final: re-render shots by 1-based index range
 
 Full rendering is local-only and requires approval.json written by
 "approve" after the user explicitly chooses a local render.`);
@@ -1543,6 +1626,11 @@ async function main() {
 }
 
 main().catch((error) => {
+  if (error?.code === 'gpu-fallback-declined') {
+    console.log(`\n${paint(C.yellow, 'paused')} ${error.message}`);
+    console.log('Reply with your choice: allow software fallback, or retry with a working GPU.');
+    return;
+  }
   console.error(`\n${paint(C.red, 'error')} ${error.message}`);
   if (process.env.DEBUG) console.error(error.stack);
   process.exitCode = 1;
