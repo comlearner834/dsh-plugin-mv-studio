@@ -1,6 +1,6 @@
 {
   "name": "@local/painted-animation-studio",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "type": "module",
   "description": "A DSH-native studio for procedural hand-painted music videos, one-shot-per-line poetry, beat-synced short videos, and an optional local 3D video room.",
   "license": "MIT",

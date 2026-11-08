@@ -93,6 +93,8 @@ MV Studio 不是一个“输入提示词、等待视频”的生成器。
 
 在 MV 工坊里额外提供一个可选的 3D 分区。它把 DSH Video Studio 的本地 3D 渲染能力接到 MV 工坊的界面里：写一段场景描述，选时长、画质、画幅、帧率、场景和镜头，然后新开一个对话调用 `generate_video`。
 
+**3D 区不随本插件打包**。它需要用户自行配置以下环境；前三个手绘分区不需要。
+
 | 能力 | 说明 |
 |---|---|
 | 场景描述 | 不限字数；主体、环境、时间、天气、材质、情绪与运镜 |
@@ -107,7 +109,18 @@ MV Studio 不是一个“输入提示词、等待视频”的生成器。
 
 ![3D视频区](docs/3d-video.png)
 
-要求：先在 DSH 中启用 `@local/dsh-video-studio`。3D视频区不会用其他生成式视频模型替代；如果工具不可用，会明确提示启用 DSH Video Studio。
+#### 3D 使用条件
+
+| 条件 | 说明 |
+|---|---|
+| DSH Video Studio | 单独安装并启用 `@local/dsh-video-studio`，它提供 `generate_video` / `video_status` / `cancel_video` |
+| Blender | 安装 Blender 3.x 或 4.x，并在 Video Studio 的 `config/config.json` 设置 `blenderPath` |
+| FFmpeg / ffprobe | 在同一个 `config/config.json` 设置 `ffmpegPath`、`ffprobePath`，或使用它自带的 vendor 版本 |
+| 验证 | 在 Video Studio 包目录运行 `node bin/studio.mjs doctor`，确认 Blender、FFmpeg、ffprobe 全部可用 |
+| 平台 | Windows / macOS / Linux，只要 Blender 能在本机启动；GPU 可选，CPU 也可以渲染 |
+| 失败影响 | 3D 区不可用时，MV 工坊、古诗词、短视频仍然可以正常使用 |
+
+本插件不包含 Blender、DSH Video Studio 或它们所需的平台运行库。3D 区不会用其他生成式视频模型替代；如果工具不可用，会明确提示用户先完成上述配置。
 
 3D 画面是程序化几何、材质、灯光与摄像机渲染，不是生成式 AI 视频。
 
@@ -208,6 +221,8 @@ dsh plugin --profile desktop add https://github.com/comlearner834/dsh-plugin-mv-
 2. 启用 **MV Studio**
 3. 重启 DSH 或刷新页面
 
+只安装这个插件，MV 工坊、古诗词、短视频即可使用；3D 区需要按 [2.4 使用条件](#24-3d视频区可选) 自行配置 DSH Video Studio 与 Blender。
+
 ## 9. 环境
 
 - DeepSeek Harness（DSH）桌面版或 Web 版
@@ -216,6 +231,8 @@ dsh plugin --profile desktop add https://github.com/comlearner834/dsh-plugin-mv-
 - ffmpeg
 
 首次渲染前请确认本机已具备上述环境。首次创建项目时，插件会自动安装项目依赖，不需要手动执行 `npm install`。音频、歌词、人物参考图与项目文件均保留在本机。
+
+**3D 区额外需要**：DSH Video Studio、Blender、ffmpeg/ffprobe，并自行填写 Video Studio 的 `config/config.json`。详见 [2.4 3D 使用条件](#24-3d视频区可选)。
 
 ## 10. 数据与隐私
 
@@ -232,6 +249,9 @@ dsh plugin --profile desktop add https://github.com/comlearner834/dsh-plugin-mv-
 
 **会上传歌曲、歌词或人物图吗？**  
 不会。歌名/作者只在本机检索；音频、歌词与人物参考图保存在本机。
+
+**3D 视频区能直接用吗？**  
+不能。3D 区需要单独启用 DSH Video Studio，并配置 Blender、FFmpeg、ffprobe；前三个手绘分区不受影响。
 
 **可以直接生成完整视频吗？**  
 流程会先出分镜和关键画面，逐镜确认后才进入完整渲染。

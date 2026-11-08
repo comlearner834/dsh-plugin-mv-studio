@@ -42,7 +42,7 @@ window.__ModuleLoader__.load({
       shortTab: 'Short video',
       threeDTab: '3D video room',
       threeDTitle: 'Render a local 3D scene.',
-      threeDLede: 'Optional room: Blender + FFmpeg on this machine. Describe the scene, pick a camera and length, then the 3D Video Studio renders it. Procedural 3D, not a generative video model.',
+      threeDLede: 'Optional room. It needs DSH Video Studio, Blender and FFmpeg configured separately on this machine; the hand-painted sections do not. Describe the scene, pick a camera and length, then the 3D Video Studio renders it.',
       threeDPromptLabel: 'What is the 3D video about?',
       threeDPromptPlaceholder: 'e.g. a rainy night city, a train passing, camera dives from the sky to a window, cold blue, lonely.',
       threeDPromptHint: 'Describe freely: subject, place, weather, time, materials, mood, camera, what moves, and what must not appear. There is no length limit.',
@@ -78,7 +78,7 @@ window.__ModuleLoader__.load({
       threeDAudioHint: 'Leave empty for a silent AAC track. No online music is downloaded.',
       threeDEmpty: 'Describe the 3D scene first.',
       threeDStart: 'Open the 3D video room',
-      threeDNote: 'Requires DSH Video Studio. Rendering runs locally in Blender; Draft is the fastest preview. The task returns a task id and reports progress through video_status.',
+      threeDNote: 'Not bundled. Install and enable DSH Video Studio, install Blender, then set blenderPath / ffmpegPath / ffprobePath in its config/config.json. Verify with node bin/studio.mjs doctor. Draft is the fastest preview. Other sections work without these.',
       threeDFooter: 'Procedural 3D · Blender + FFmpeg · local only',
       threeDPrompt: 'Use the generate_video tool to create a local cinematic 3D video.\nScene description: {prompt}\nParameters: {params}.\nReturn the task_id, then use video_status to report progress and the final MP4 path. Do not block the chat while Blender renders. If generate_video is unavailable, say that DSH Video Studio must be enabled; do not substitute another generative video model.',
       shortPageTitle: 'Make a beat-synced short.',
@@ -163,6 +163,9 @@ window.__ModuleLoader__.load({
       help5Title: '5. Say yes to the full video',
       help5Body: 'After every shot is approved, I ask again. Say yes to render on this computer; no answer means no.',
       helpLocalNote: 'Title + artist only = local search. No online download of the full recording.',
+      help3DTitle: '3D video room (optional)',
+      help3DNote: 'The 3D room is not bundled. Install DSH Video Studio, install Blender, set blenderPath / ffmpegPath / ffprobePath in Video Studio config/config.json, then run node bin/studio.mjs doctor. If it is not configured, only the 3D room is affected; MV, poetry and short video still work.',
+      threeDHelpNote: '3D room only: install and enable DSH Video Studio, install Blender, and set blenderPath / ffmpegPath / ffprobePath in its config/config.json. The other three sections do not need this.',
       helpTip: 'No commands or settings to learn. Stuck? Read the five steps again.',
       helpGotIt: 'Got it',
       start: 'Start the MV',
@@ -236,7 +239,7 @@ window.__ModuleLoader__.load({
       shortTab: '短视频',
       threeDTab: '3D视频区',
       threeDTitle: '把一段描述，渲染成 3D 场景。',
-      threeDLede: '可选分区：本机 Blender + FFmpeg。写清场景、镜头和时长，3D 视频区会在本地渲染。程序化 3D，不是生成式视频模型。',
+      threeDLede: '可选分区。需要单独安装并启用 DSH Video Studio，并在本机配置 Blender 与 FFmpeg；前三个手绘分区不需要。写清场景、镜头和时长，3D 视频区会在本地渲染。',
       threeDPromptLabel: '这条 3D 视频讲什么？',
       threeDPromptPlaceholder: '例如：雨夜城市，一列列车缓缓驶过，镜头从高空俯冲到车窗，冷蓝色调，孤独压抑。',
       threeDPromptHint: '尽情写：主体、环境、天气、时间、材质、情绪、运镜、什么在动、不要出现什么；长度不限。',
@@ -272,7 +275,7 @@ window.__ModuleLoader__.load({
       threeDAudioHint: '留空则生成静音 AAC 轨；不会下载网络音乐。',
       threeDEmpty: '请先描述 3D 场景。',
       threeDStart: '打开 3D 视频区',
-      threeDNote: '需要已启用 DSH Video Studio。渲染在本机 Blender 中运行，draft 最快；工具会返回任务号，并通过 video_status 报告进度。',
+      threeDNote: '3D 区不随本插件打包。先安装并启用 DSH Video Studio，安装 Blender，再在它的 config/config.json 里设置 blenderPath / ffmpegPath / ffprobePath；用 node bin/studio.mjs doctor 检查。draft 最快；前三个分区不需要这些。',
       threeDFooter: '程序化 3D · Blender + FFmpeg · 只做本地渲染',
       threeDPrompt: '使用 generate_video 工具生成一段本地电影级 3D 视频。\n场景描述：{prompt}\n参数：{params}。\n生成后返回 task_id，并用 video_status 报告进度和最终 MP4 路径；渲染期间不要阻塞对话。如果 generate_video 不可用，请明确说明需要启用 DSH Video Studio，不要用其他生成式视频模型替代。',
       shortPageTitle: '做一支会卡点的短视频。',
@@ -357,6 +360,9 @@ window.__ModuleLoader__.load({
       help5Title: '5. 最后才出完整视频',
       help5Body: '每个镜头都过了，我才会再问你要不要正式生成。你说「要」才开始；不说就不会做。',
       helpLocalNote: '只给歌名和作者 = 只在这台电脑里找歌。不会联网下载完整原唱。',
+      help3DTitle: '3D 视频区（可选）',
+      help3DNote: '3D 区不随插件安装：需要 DSH Video Studio、Blender、ffmpeg/ffprobe；在 Video Studio 的 config/config.json 设置 blenderPath、ffmpegPath、ffprobePath，并运行 node bin/studio.mjs doctor 检查。未配置只影响 3D 区，MV 工坊、古诗词、短视频仍可正常使用。',
+      threeDHelpNote: '仅 3D 区需要：安装并启用 DSH Video Studio，安装 Blender，并在它的 config/config.json 里设置 blenderPath / ffmpegPath / ffprobePath；前三个分区不需要。',
       helpTip: '命令、参数、软件设置都不用管。卡住了就再看一遍这五步。',
       helpGotIt: '明白了',
       start: '开始做 MV',
@@ -550,6 +556,24 @@ window.__ModuleLoader__.load({
       .pa-help-step-title { font-size: 13px; font-weight: 650; line-height: 1.5; }
       .pa-help-step-body {
         margin: 3px 0 0;
+        color: var(--dsw-alias-label-secondary);
+        font-size: 12px;
+        line-height: 1.65;
+      }
+      .pa-help-3d {
+        margin: 18px 0 0;
+        padding: 12px 14px;
+        border: 1px solid var(--dsw-alias-border-l1);
+        border-radius: 8px;
+        background: var(--dsw-alias-bg-layer-1);
+      }
+      .pa-help-3d-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--dsw-alias-label-primary);
+      }
+      .pa-help-3d-body {
+        margin: 6px 0 0;
         color: var(--dsw-alias-label-secondary);
         font-size: 12px;
         line-height: 1.65;
@@ -2173,6 +2197,10 @@ window.__ModuleLoader__.load({
                     h('p', { className: 'pa-help-step-body' }, t(`help${n}Body`)),
                   ),
                 )),
+              ),
+              h('div', { className: 'pa-help-3d' },
+                h('div', { className: 'pa-help-3d-title' }, t('help3DTitle')),
+                h('p', { className: 'pa-help-3d-body' }, t('help3DNote')),
               ),
               h('p', { className: 'pa-help-tip' }, t('helpTip')),
               h('div', { className: 'pa-help-actions' },
